@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: digital-bank-backends-deployment
+  namespace: digibank
+  labels:
+    app: digital-bank-backends
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: digital-bank-backends
+  template:
+    metadata:
+      labels:
+        app: digital-bank-backends
+    spec:
+      containers:
+      - name: digital-bank-backends
+        image: leandrovo/digitalbank-backend-java:1.0
+        resources:
+          requests:
+            memory: "512M"
+            cpu: "500m"
+          limits:
+            memory: "1024M"
+            cpu: "750m"
+        ports:
+          - name: db-bkends-port
+            containerPort: 8081
+        env:
+          - name: SLOW_ZIP
+            value: "14758"
+          - name: APMENV_AGENTNAME
+            value: "digibank_backends"
+          - name: APMENV_INTROSCOPE_AGENT_HOSTNAME
+            value: "demo_k8s"     
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: digital-bank-backends-svc
+  namespace: digibank
+spec:
+  selector:
+    app: digital-bank-backends
+  ports:
+    - name: http-credit
+      port: 8081  
+      targetPort: db-bkends-port
+
+

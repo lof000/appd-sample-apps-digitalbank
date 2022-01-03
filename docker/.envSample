@@ -1,0 +1,22 @@
+#external IP for AWS ec2 host where the app is running
+AWS_EXTERNAL_IP=
+
+#####
+#apm agent info
+#####
+AGENT_CREDENTIAL=
+BROWSER_AGENT_SNIPPET=
+BANK_HOST=
+CREDIT_HOST=
+BROKER_HOST=
+APIM_HOST=
+AGENT_ATM_SEARCH_HOST=
+AGENT_VISA_HOST=
+
+#####
+#API Gateway info
+#####
+#this one must be an FQDN
+SSG_HOST=
+
+

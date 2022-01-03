@@ -1,0 +1,183 @@
+###################################
+### DIGITAL BANKING 
+# app
+# java backends
+# APM agents
+#
+# Please configure APM related info in .env file
+###################################
+
+version: "3.5"
+services:
+
+# APM - MONTAR O VOLUME DO AGENTE
+  caapm-agent-saas:
+    image: leandrobroadcom/docker-apm-agent:20.11
+    container_name: caapm-agent
+    volumes:
+      - agent-volume:/opt/caapm/agent
+
+###################################
+### DIGITAL BANKING APP - BEGIN
+###################################
+
+# =====================================================================
+# Digital Broker Service Configuration
+# =====================================================================
+  broker:
+    image: leandrobroadcom/digitalbroker-new:1.0
+    container_name: broker
+    hostname: broker
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+    restart: unless-stopped
+
+# =====================================================================
+# Digital Credit Service Configuration
+# =====================================================================    
+  credit:
+    image: leandrobroadcom/digitalcredit-new:1.0
+    container_name: credit
+    hostname: credit
+    environment:
+
+      # Debug Options
+      LOGGING_LEVEL_IO_DIGISIC_CREDIT: INFO
+
+      # Digital Broker Connection
+      SPRING_ARTEMIS_MODE: native
+      SPRING_ARTEMIS_HOST: broker
+      SPRING_ARTEMIS_PORT: 61616
+      SPRING_ARTEMIS_USER: admin
+      SPRING_ARTEMIS_PASSWORD: admin
+
+      # Credit Application Process
+      IO_DIGISIC_CREDIT_APP_PROCESS_ENABLED: 'true'
+      IO_DIGISIC_CREDIT_APP_PROCESS_TIME: 20
+
+      # Digital Credit Application Process JMS Queues
+      IO_DIGISIC_PARTNER_CREDIT_APP_REQUEST: CREDIT.APP.REQUEST
+      IO_DIGISIC_PARTNER_CREDIT_APP_RESPONSE: CREDIT.APP.RESPONSE
+
+      # APM AGENT VARIABLES
+      APMENV_AGENTNAME: "DIGIBANK_CREDIT"
+      APMENV_INTROSCOPE_AGENT_HOSTNAME: "${CREDIT_HOST}"
+      JAVA_OPTS: -javaagent:/opt/caapm/agent/wily/Agent.jar
+      APMENV_INTROSCOPE_AGENT_BROWSERAGENT_AUTOINJECTIONENABLED: "false"
+      APMENV_AGENTMANAGER_CREDENTIAL: "${AGENT_CREDENTIAL}"
+
+    ports:
+      - "3500:8080"
+
+    depends_on:
+      - broker
+
+    #APM - ADD AGENT VOLUME
+    volumes:
+      - agent-volume:/opt/caapm/agent      
+
+    restart: unless-stopped
+
+# =====================================================================
+# Digital Bank Service Configuration
+# =====================================================================
+  bank:
+    image: leandrobroadcom/digitalbank-new:1.0
+    container_name: bank
+    hostname: bank
+    environment:
+
+      # Debug Options
+      LOGGING_LEVEL_IO_DIGISIC_BANK: INFO
+      
+      # Digital Broker connection
+      SPRING_ARTEMIS_MODE: native
+      SPRING_ARTEMIS_HOST: broker
+      SPRING_ARTEMIS_PORT: 61616
+      SPRING_ARTEMIS_USER: admin
+      SPRING_ARTEMIS_PASSWORD: admin
+
+      # Digital Credit Connection
+      IO_DIGISIC_CREDIT_ENABLED: 'true'
+      IO_DIGISIC_CREDIT_PROTOCOL: http
+      IO_DIGISIC_CREDIT_HOST: credit
+      IO_DIGISIC_CREDIT_PORT: 8080
+      IO_DIGISIC_CREDIT_CONTEXT-PATH: /credit
+      IO_DIGISIC_CREDIT_USERNAME: admin@demo.io
+      IO_DIGISIC_CREDIT_PASSWORD: Demo123!
+
+      # Digital Credit Application Process JMS Queues
+      IO_DIGISIC_PARTNER_CREDIT_APP_REQUEST: CREDIT.APP.REQUEST
+      IO_DIGISIC_PARTNER_CREDIT_APP_RESPONSE: CREDIT.APP.RESPONSE
+
+      # ATM Location Service Connection 
+      IO_DIGISIC_BANK_ATM_PROTOCOL: https
+      IO_DIGISIC_BANK_ATM_HOST: bankingservices.io # uat-api.synapsefi.com #
+      IO_DIGISIC_BANK_ATM_PORT: 
+
+      # VISA Direct Payment Service
+      IO_DIGISIC_BANK_VISA_PROTOCOL: https
+      IO_DIGISIC_BANK_VISA_HOST: creditservices.io
+      IO_DIGISIC_BANK_VISA_PORT:
+      
+      # Open Banking API Service
+      IO_DIGISIC_BANK_OBP_ENABLED: 'true'
+      IO_DIGISIC_BANK_OBP_CONSUMER_KEY: vwfpvwfr1kngt0up2jelebzmvxrhst4vhxvw1jm3
+      IO_DIGISIC_BANK_OBP_VERSION: v4.0.0
+      IO_DIGISIC_BANK_OBP_PROTOCOL: https
+      IO_DIGISIC_BANK_OBP_HOST:
+      IO_DIGISIC_BANK_OBP_PORT:
+
+      #APM AGENT VARIABLES
+      APMENV_AGENTNAME: "DIGIBANK"
+      APMENV_INTROSCOPE_AGENT_HOSTNAME: "DIGIBANK_DEMO_TST"
+      JAVA_OPTS: -javaagent:/opt/caapm/agent/wily/Agent.jar
+      APMENV_AGENTMANAGER_CREDENTIAL: ""
+      APMENV_INTROSCOPE_AGENT_BROWSERAGENT_AUTOINJECTIONENABLED: "true"
+      APMENV_INTROSCOPE_AGENT_BROWSERAGENT_CONTENTENCODING_ENABLED: "true"
+      APMENV_INTROSCOPE_AGENT_BROWSERAGENT_INSTRUMENTCLASS_AUTOSKIP_DEPTH: "5"
+      APMENV_INTROSCOPE_AGENT_BROWSERAGENT_AUTOINJECTION_DEEP_CHECK: "true"
+#      APMENV_LOG4J_LOGGER_INTROSCOPEAGENT: "INFO, logfile"
+#      APMENV_LOG4J_LOGGER_INTROSCOPEAGENT_BROWSERAGENT: "TRACE#com.wily.util.feedback.Log4JSeverityLevel, logfile"
+#      APMENV_INTROSCOPE_AGENT_BROWSERAGENT_SNIPPETSTRING: '<script type="text/javascript" id="ca_eum_ba" src="https://dxc.dxi-na1.saas.broadcom.com/api/1/urn:ca:tenantId:358D6A3B-4776-4625-9C5C-C9635E7BE16E/urn:ca:appId:DIGITAL_BANK/bajs?agent=browser" data-profileUrl="https://dxc.dxi-na1.saas.broadcom.com/api/1/urn:ca:tenantId:358D6A3B-4776-4625-9C5C-C9635E7BE16E/urn:ca:appId:DIGITAL_BANK/profile?agent=browser" data-tenantID="358D6A3B-4776-4625-9C5C-C9635E7BE16E" data-appID="DIGITAL_BANK" data-appVersion="1.0" data-use-axa-appname="true" data-appKey="24166170-dc12-11ea-9f19-833497754f2f"></script><script type="text/javascript" id="ca_eum_ba_ext" src="http://localhost/bank.js"></script>'      
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      - broker
+      - credit
+
+    #APM - ADD AGENT VOLUME
+    volumes:
+      - agent-volume:/opt/caapm/agent
+    restart: unless-stopped      
+    restart: unless-stopped
+
+###################################
+### DIGITAL BANKING APP - END
+###################################  
+
+
+###################################
+### DIGITAL BANKING BACKENDS - BEGIN
+###################################
+
+  atm-search:
+    image: leandrobroadcom/digisicapis:1.0
+    container_name: atm-search
+    ports:
+      - "8081:8081"
+    #APM - ADD AGENT VOLUME
+    volumes:
+      - agent-volume:/opt/caapm/agent
+    restart: unless-stopped
+
+###################################
+### DIGITAL BANKING BACKENDS - END
+###################################
+
+#APM ADD AGENT VOLUME
+volumes:
+  agent-volume:

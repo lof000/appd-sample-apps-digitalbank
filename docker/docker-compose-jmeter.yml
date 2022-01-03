@@ -1,0 +1,17 @@
+version: "3.5"
+services:
+ jmeter:
+    image: leandrobroadcom/jmeter:1.0
+    hostname: jmeter
+    restart: always
+    volumes:
+      - ${PWD}/scripts:/opt/jmeter/scripts
+    environment:
+      BASE_URL_1: "10.128.0.6"
+      HTTP_PORT: "8080"
+      USERNAME: "jsmith@demo.io"
+      PASSWORD: "Demo123!"
+      BASE_URL_API_GATEWAY: "10.128.0.6"
+      BASE_GATEWAY_PORT: "8081"
+
+

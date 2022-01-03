@@ -1,0 +1,6 @@
+FROM tomcat:9.0
+EXPOSE 8080
+COPY /war/bank.war /usr/local/tomcat/webapps/
+COPY /war/bank_application.properties /usr/local/tomcat/conf/digitalbank.properties
+COPY bank.js /usr/local/tomcat/webapps/ba/html/bank.js
+HEALTHCHECK CMD curl -fail http://localhost:8080/bank/api/v1/health || exit 1
