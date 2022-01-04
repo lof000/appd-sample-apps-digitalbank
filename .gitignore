@@ -25,3 +25,4 @@ hs_err_pid*
 docker/.env
 /target
 target/
+k8s/digitalbank/load/jmeter-secret.yml
