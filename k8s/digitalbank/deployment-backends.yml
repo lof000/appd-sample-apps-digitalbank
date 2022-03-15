@@ -20,11 +20,11 @@ spec:
         image: leandrovo/digitalbank-backend-java:1.0
         resources:
           requests:
-            memory: "512M"
+            memory: "1024M"
             cpu: "500m"
           limits:
-            memory: "1024M"
-            cpu: "750m"
+            memory: "2048M"
+            cpu: "700m"
         ports:
           - name: db-bkends-port
             containerPort: 8081

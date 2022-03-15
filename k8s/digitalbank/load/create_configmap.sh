@@ -1,2 +1,2 @@
 #!/bin/bash
-kubectl create configmap config-jmeter --from-file=script.jmx -n digibank
+kubectl create configmap config-jmeter --from-file=script.jmx -n load-jmeter

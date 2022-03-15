@@ -21,10 +21,10 @@ spec:
         image: leandrovo/digitalcredit-new:1.0
         resources:
           requests:
-            memory: "512M"
+            memory: "1024M"
             cpu: "500m"
           limits:
-            memory: "1024M"
+            memory: "2048M"
             cpu: "700m"
         ports:
           - name: db-credit-port
@@ -58,6 +58,17 @@ spec:
             value: "digibank_credit"
           - name: APMENV_INTROSCOPE_AGENT_HOSTNAME
             value: "demo_k8s"
+
+#          - name: SPRING_DATASOURCE_PLATFORM
+#            value: "mysql"
+#          - name: SPRING_DATASOURCE_USERNAME
+#            value: "digitaluser"
+#          - name: SPRING_DATASOURCE_PASSWORD
+#            value: "Demo123!"
+#          - name: SPRING_DATASOURCE_URL
+#            value: "jdbc:mysql://mysql:3306/digitalbank?useSSL=false&allowPublicKeyRetrieval=true"              
+#          - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
+#            value: "org.hibernate.dialect.MySQL5Dialect"
 
 
 ---

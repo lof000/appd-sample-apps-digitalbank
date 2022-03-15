@@ -17,14 +17,13 @@ spec:
     spec:
       containers:
       - name: digital-bank
-        #image: digisic/digitalbank:latest
         image: leandrovo/digitalbank-new:1.0
         resources:
           requests:
-            memory: "512M"
+            memory: "1024M"
             cpu: "500m"
           limits:
-            memory: "1024M"
+            memory: "2048M"
             cpu: "750m"
         ports:
           - name: db-bank-port
@@ -64,20 +63,23 @@ spec:
               value: "CREDIT.APP.REQUEST"
             - name: IO_DIGISIC_PARTNER_CREDIT_APP_RESPONSE
               value: "CREDIT.APP.RESPONSE"
+
             # ATM Location Service Connection 
             - name: IO_DIGISIC_BANK_ATM_PROTOCOL
               value: "http"
             - name: IO_DIGISIC_BANK_ATM_HOST
-              value: "digital-bank-backends-svc"              
+              value: "digital-bank-backends-svc"                           
             - name: IO_DIGISIC_BANK_ATM_PORT
               value: "8081"
+
             # VISA Direct Payment Service
             - name: IO_DIGISIC_BANK_VISA_PROTOCOL
-              value: "http"     
+              value: "http"
             - name: IO_DIGISIC_BANK_VISA_HOST
-              value: "digital-bank-backends-svc"   
+              value: "digital-bank-backends-svc"                  
             - name: IO_DIGISIC_BANK_VISA_PORT
               value: "8081" 
+              
             # Open Banking API Service
             - name: IO_DIGISIC_BANK_OBP_ENABLED
               value: "true"  
@@ -91,10 +93,19 @@ spec:
               value: ""     
             - name: IO_DIGISIC_BANK_OBP_PORT
               value: ""             
-            - name: APMENV_AGENTNAME
-              value: "digibank_front"
-            - name: APMENV_INTROSCOPE_AGENT_HOSTNAME
-              value: "demo_k8s"
+
+#            - name: SPRING_DATASOURCE_PLATFORM
+#              value: "mysql"
+#            - name: SPRING_DATASOURCE_USERNAME
+#              value: "digitaluser"
+#            - name: SPRING_DATASOURCE_PASSWORD
+#              value: "Demo123!"
+#            - name: SPRING_DATASOURCE_URL
+#              value: "jdbc:mysql://mysql:3306/digitalbank?useSSL=false&allowPublicKeyRetrieval=true"              
+#            - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
+#              value: "org.hibernate.dialect.MySQL5Dialect"
+
+
 
 
 ---

@@ -2,11 +2,13 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: jmeter-configmap
-  namespace: digibank
+  namespace: load-jmeter
 data:
   # property-like keys; each key maps to a simple value
-  BASE_URL_1: "digital-bank-svc"
+  #BASE_URL_1: "digital-bank-svc"
+  BASE_URL_1: "20.121.232.125"
   HTTP_PORT: "8080"
-  BASE_URL_API_GATEWAY: "digital-bank-svc"
+  #BASE_URL_API_GATEWAY: "digital-bank-svc"
+  BASE_URL_API_GATEWAY: "20.121.232.125"
   BASE_GATEWAY_PORT: "8081"
 

@@ -18,13 +18,12 @@ spec:
       containers:
       - name: digital-bank-broker
         image: leandrovo/digitalbroker-new:1.0
-        #image: digisic/digitalbroker:latest        
         resources:
           requests:
-            memory: "256M"
+            memory: "512M"
             cpu: "250m"
           limits:
-            memory: "512M"
+            memory: "1024M"
             cpu: "500m"          
         ports:
           - name: broker-port-1
