@@ -29,6 +29,17 @@ spec:
         ports:
           - name: db-credit-port
             containerPort: 8080
+        env:
+        - name: SPRING_ARTEMIS_USER
+          valueFrom:
+            secretKeyRef:
+              name: sec-digibank-artemis
+              key: SPRING_ARTEMIS_USER  
+        - name: SPRING_ARTEMIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sec-digibank-artemis
+              key: SPRING_ARTEMIS_PASSWORD            
         envFrom:
         - configMapRef:
             name: cm-digibank

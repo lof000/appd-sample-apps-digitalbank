@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  SPRING_ARTEMIS_USER: YWRtaW4=
+  SPRING_ARTEMIS_PASSWORD: YWRtaW4=
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: sec-digibank-artemis
+  namespace: digibank
+
+

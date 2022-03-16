@@ -23,6 +23,7 @@ deployApps () {
 
     #secrets
     kubectl apply -f sec-digibank-mysql.yaml
+    kubectl apply -f sec-digibank-artemis.yaml
 
     #deployments
     kubectl apply -f dp-digibank-broker.yaml
