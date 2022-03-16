@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: digital-bank-credit-deployment
+  namespace: digibank
+  labels:
+    app: digital-bank-credit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: digital-bank-credit
+  template:
+    metadata:
+      labels:
+        app: digital-bank-credit
+    spec:
+      containers:
+      - name: digital-bank-credit
+        #image: digisic/digitalcredit:latest
+        image: leandrovo/digitalcredit-new:1.0
+        resources:
+          requests:
+            memory: "512M"
+            cpu: "500m"
+          limits:
+            memory: "2048M"
+            cpu: "700m"
+        ports:
+          - name: db-credit-port
+            containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: cm-digibank
+#        - configMapRef:
+#            name: cm-digibank-db
+#        - name: SPRING_DATASOURCE_USERNAME
+#          valueFrom:
+#            secretKeyRef:
+#              name: sec-digibank-mysql
+#              key: SPRING_DATASOURCE_USERNAME
+#        - name: SPRING_DATASOURCE_PASSWORD
+#          valueFrom:
+#            secretKeyRef:
+#              name: sec-digibank-mysql
+#              key: SPRING_DATASOURCE_PASSWORD 
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: digital-bank-credit-svc
+  namespace: digibank
+spec:
+  selector:
+    app: digital-bank-credit
+  #type: NodePort
+  ports:
+    - name: http-credit
+      port: 8085  
+      targetPort: db-credit-port
+

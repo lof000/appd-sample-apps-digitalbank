@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  IO_DIGISIC_BANK_ATM_PROTOCOL: "http"
+  IO_DIGISIC_BANK_ATM_HOST: "digital-bank-backends-atm-java-svc"
+  IO_DIGISIC_BANK_ATM_PORT: "8081"
+kind: ConfigMap
+metadata:
+  name: cm-digibank-atm-search
+  namespace: digibank

@@ -11,17 +11,26 @@ displayComponents() {
 
 deleteAppComponents() {
 
-    kubectl delete -f deployment-bank-route.yml
-    sleep 3
-    kubectl delete -f deployment-backends.yml
-    sleep 3
-    kubectl delete -f deployment-broker.yml
-    sleep 3
-    kubectl delete -f deployment-credit.yml
-    sleep 3
-    kubectl delete -f deployment-bank.yml
-    sleep 3
-    kubectl delete -f digibank-namespace.yml
+    #deployments
+    kubectl delete -f dp-digibank-broker.yaml
+    kubectl delete -f dp-digibank-credit.yaml
+    kubectl delete -f dp-digibank-front.yaml
+    kubectl delete -f dp-digibank-visa-java.yaml
+    kubectl delete -f dp-digibank-atm-search-java.yaml
+
+    #config maps
+    kubectl delete -f cm-digibank-atm-search.yaml
+    kubectl delete -f cm-digibank-db.yaml
+    kubectl delete -f cm-digibank-opb.yaml   
+    kubectl delete -f cm-digibank-visa.yaml    
+    kubectl delete -f cm-digibank.yaml
+
+    #secrets
+    kubectl delete -f sec-digibank-mysql.yaml
+
+    # namespace
+    kubectl delete -f ns-digibank.yaml
+
 }
 
 

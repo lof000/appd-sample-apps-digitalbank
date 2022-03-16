@@ -11,15 +11,25 @@ displayComponents() {
 
 deployApps () {
 
-    kubectl apply -f digibank-namespace.yml
-    sleep 2
-    kubectl apply -f deployment-broker.yml
-    sleep 3
-    kubectl apply -f deployment-credit.yml
-    sleep 3
-    kubectl apply -f deployment-bank.yml
-    sleep 3
-    kubectl apply -f deployment-backends.yml
+    # namespace
+    kubectl apply -f ns-digibank.yaml
+
+    #config maps
+    kubectl apply -f cm-digibank-atm-search.yaml
+    kubectl apply -f cm-digibank-db.yaml
+    kubectl apply -f cm-digibank-opb.yaml   
+    kubectl apply -f cm-digibank-visa.yaml    
+    kubectl apply -f cm-digibank.yaml
+
+    #secrets
+    kubectl apply -f sec-digibank-mysql.yaml
+
+    #deployments
+    kubectl apply -f dp-digibank-broker.yaml
+    kubectl apply -f dp-digibank-credit.yaml
+    kubectl apply -f dp-digibank-front.yaml
+    kubectl apply -f dp-digibank-visa-java.yaml
+    kubectl apply -f dp-digibank-atm-search-java.yaml
 }
 
 
@@ -29,4 +39,4 @@ deployApps
 displayComponents 2
 
 echo " "
-echo "`date +%c` [INFO]: ############# DONE....Digital Bank Up & Running #############"  
+echo "`date +%c` [INFO]: ############# DONE....Digital Bank Up & Running #############"
