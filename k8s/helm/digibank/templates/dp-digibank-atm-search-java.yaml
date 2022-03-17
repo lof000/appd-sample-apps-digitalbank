@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: digital-bank-backends-atm-java-deployment
+  namespace: digibank
+  labels:
+    app: digital-bank-backends-atm-java
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: digital-bank-backends-atm-java
+  template:
+    metadata:
+      labels:
+        app: digital-bank-backends-atm-java
+    spec:
+      containers:
+      - name: digital-bank-backends-atm-java
+        image: "{{ .Values.image.atm }}"
+        resources:
+          requests:
+            memory: "512M"
+            cpu: "500m"
+          limits:
+            memory: "2048M"
+            cpu: "700m"
+        ports:
+          - name: atm-port
+            containerPort: 8081
+        env:
+          - name: SLOW_ZIP
+            value: "14758"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: digital-bank-backends-atm-java-svc
+  namespace: digibank
+spec:
+  selector:
+    app: digital-bank-backends-atm-java
+  ports:
+    - name: http-credit
+      port: 8081  
+      targetPort: atm-port
+
+
