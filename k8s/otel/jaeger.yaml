@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jaeger
+  name: jaeger
+  namespace: otel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaeger
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: jaeger
+    spec:
+      containers:
+      - image: jaegertracing/all-in-one
+        name: all-in-one
+        ports:
+        - containerPort: 16686        
+        - containerPort: 14268    
+        - containerPort: 14250                    
+        resources: {}
+status: {}

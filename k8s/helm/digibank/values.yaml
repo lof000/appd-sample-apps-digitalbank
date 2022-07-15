@@ -33,11 +33,11 @@ configMap:
     IO_DIGISIC_CREDIT_PASSWORD: "Demo123!"  
   visa:
     IO_DIGISIC_BANK_VISA_PROTOCOL: "http"
-    IO_DIGISIC_BANK_VISA_HOST: "digital-bank-backends-visa-java-svc"
+    IO_DIGISIC_BANK_VISA_HOST: "digital-bank-backends-visa-svc.digibank-backends.svc.cluster.local"
     IO_DIGISIC_BANK_VISA_PORT: "8081"
   atm:
     IO_DIGISIC_BANK_ATM_PROTOCOL: "http"
-    IO_DIGISIC_BANK_ATM_HOST: "digital-bank-backends-atm-java-svc"
+    IO_DIGISIC_BANK_ATM_HOST: "digital-bank-backends-atm-svc.digibank-backends.svc.cluster.local"
     IO_DIGISIC_BANK_ATM_PORT: "8081"
   mysql:
     SPRING_DATASOURCE_PLATFORM: "mysql"
@@ -48,8 +48,11 @@ image:
   bank: "leandrovo/digitalbank-new:1.0"
   credit: "leandrovo/digitalcredit-new:1.0"
   broker: "leandrovo/digitalbroker-new:1.0"
-  atm: "leandrovo/digitalbank-backend-java:1.0"
+#  atm: "leandrovo/digitalbank-backend-java:1.0"
+  atm: "leandrovo/digitalbank-backends-otel-agent:1.0"  
+  atm_node: "leandrovo/digitalbank-backend-node:1.0"    
   visa: "leandrovo/digitalbank-backend-java:1.0"
+  visa_node: "leandrovo/digitalbank-backend-node:1.0"  
   tag: ""
 
 extraConfig:

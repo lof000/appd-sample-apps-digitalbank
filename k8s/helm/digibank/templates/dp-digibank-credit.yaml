@@ -38,7 +38,16 @@ spec:
           valueFrom:
             secretKeyRef:
               name: sec-digibank-artemis
-              key: SPRING_ARTEMIS_PASSWORD            
+              key: SPRING_ARTEMIS_PASSWORD    
+#teste              
+        - name: APPDYNAMICS_OPENTELEMETRY
+          value: "true"
+        - name: APPDYNAMICS_AGENT_NODE_NAME
+          value: "reuse"            
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.otel.svc.cluster.local:4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=digibank-credit,service.namespace=digibank"                       
         envFrom:
         - configMapRef:
             name: cm-digibank

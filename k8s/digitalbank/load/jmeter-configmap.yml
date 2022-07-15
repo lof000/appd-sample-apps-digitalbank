@@ -6,9 +6,9 @@ metadata:
 data:
   # property-like keys; each key maps to a simple value
   #BASE_URL_1: "digital-bank-svc"
-  BASE_URL_1: "20.121.232.125"
+  BASE_URL_1: "digital-bank-svc.digibank.svc.cluster.local"
   HTTP_PORT: "8080"
   #BASE_URL_API_GATEWAY: "digital-bank-svc"
-  BASE_URL_API_GATEWAY: "20.121.232.125"
+  BASE_URL_API_GATEWAY: "digital-bank-svc.digibank.svc.cluster.local"
   BASE_GATEWAY_PORT: "8081"
 

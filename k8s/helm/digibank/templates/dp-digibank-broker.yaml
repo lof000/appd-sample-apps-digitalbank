@@ -30,6 +30,16 @@ spec:
             containerPort: 8161
           - name: broker-port-2
             containerPort: 61616
+#teste            
+        env:
+        - name: APPDYNAMICS_OPENTELEMETRY
+          value: "true"
+        - name: APPDYNAMICS_AGENT_NODE_NAME
+          value: "reuse"            
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.otel.svc.cluster.local:4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=digibank-broker,service.namespace=digibank"              
 
 ---
 

@@ -27,3 +27,5 @@ docker/.env
 target/
 k8s/digitalbank/load/jmeter-secret.yml
 k8s/helm/digibank/values.yamlORIG
+k8s/appdynamics/values.yaml
+k8s/otel/otel-config.yaml

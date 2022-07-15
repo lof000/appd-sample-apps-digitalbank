@@ -1,0 +1,50 @@
+# To install Cluster Agent 
+installClusterAgent: true
+
+
+# AppDynamics controller info
+controllerInfo:
+  url: https://se-lab.saas.appdynamics.com
+  account: se-lab          
+  username: ""                       
+  password: ""                                 
+  accessKey: "" 
+
+#install:
+#  metrics-server: true
+
+# Cluster agent config
+clusterAgent:
+  nsToMonitorRegex: digibank
+  logProperties:
+    logFileSizeMb: 5
+    logFileBackups: 3
+    logLevel: DEBUG  
+
+instrumentationConfig:
+  enabled: true
+  instrumentationMethod: Env
+  nsToInstrumentRegex: digibank
+  defaultAppName: digibank
+  appNameStrategy: namespace
+  imageInfo:
+    java:
+      image: "docker.io/appdynamics/java-agent:latest"
+      agentMountPath: /opt/appdynamics
+      imagePullPolicy: Always
+  instrumentationRules:
+    - matchString: digital-bank-front|digital-bank-credit-deployment|digital-bank-broker-deployment
+      namespaceRegex: digibank
+      language: java
+#      labelMatch:
+#        - framework: java          
+      imageInfo:
+        image: "docker.io/appdynamics/java-agent:latest"        
+        agentMountPath: /opt/appdynamics
+        imagePullPolicy: Always
+#      customAgentConfig: "-Dappdynamics.opentelemetry.enabled=true"
+
+
+
+
+

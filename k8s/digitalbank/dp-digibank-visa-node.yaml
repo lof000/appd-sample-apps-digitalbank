@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: digital-bank-backends-visa-node
+    tier: backend
+    tier-name: backend-visa    
+  name: digital-bank-backends-visa-node-deployment
+  namespace: digibank
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: digital-bank-backends-visa-node
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: digital-bank-backends-visa-node
+        tier: backend
+        tier-name: backend-visa              
+    spec:
+      containers:
+      - image: leandrovo/digitalbank-backend-node:1.0
+        name: digital-bank-backends-visa-node
+        ports:
+          - name: visa-port
+            containerPort: 3000        
+        resources: {}
+status: {}
+

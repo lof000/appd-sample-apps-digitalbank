@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: backend-node
+  name: backend-node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-node
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: backend-node
+    spec:
+      containers:
+      - image: leandrovo/digitalbank-backends-node:1.0
+        name: digitalbank-backends-node
+        resources: {}
+status: {}

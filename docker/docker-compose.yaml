@@ -1,0 +1,221 @@
+###################################
+### DIGITAL BANKING 
+# app
+# no backends
+# app agents
+#
+# Please configure APM related info in .env file
+###################################
+
+version: "3.5"
+services:
+
+# APM - AGENT VOLUME (SIDECAR)
+  appd-agent-saas:
+    image: docker.io/appdynamics/java-agent:latest
+    container_name: caapm-agent
+    volumes:
+      - agent-volume:/opt/appdynamics
+
+###################################
+### DIGITAL BANKING APP - BEGIN
+###################################
+
+# =====================================================================
+# Digital Broker Service Configuration
+# =====================================================================
+  broker:
+    image: leandrovo/digitalbroker-new:1.0
+    container_name: broker
+    hostname: broker
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+    restart: unless-stopped
+
+# =====================================================================
+# Digital Credit Service Configuration
+# =====================================================================    
+  credit:
+    image: leandrovo/digitalcredit-new:1.0
+    container_name: credit
+    hostname: credit
+    environment:
+
+      # Debug Options
+      LOGGING_LEVEL_IO_DIGISIC_CREDIT: INFO
+
+      # Digital Broker Connection
+      SPRING_ARTEMIS_MODE: native
+      SPRING_ARTEMIS_HOST: broker
+      SPRING_ARTEMIS_PORT: 61616
+      SPRING_ARTEMIS_USER: admin
+      SPRING_ARTEMIS_PASSWORD: admin
+
+      # Credit Application Process
+      IO_DIGISIC_CREDIT_APP_PROCESS_ENABLED: 'true'
+      IO_DIGISIC_CREDIT_APP_PROCESS_TIME: 20
+
+      # Digital Credit Application Process JMS Queues
+      IO_DIGISIC_PARTNER_CREDIT_APP_REQUEST: CREDIT.APP.REQUEST
+      IO_DIGISIC_PARTNER_CREDIT_APP_RESPONSE: CREDIT.APP.RESPONSE
+
+      #APM AGENT VARIABLES
+      JAVA_OPTS: '-javaagent:/opt/appdynamics/javaagent.jar'
+      APPDYNAMICS_CONTROLLER_HOST_NAME: ${APPDYNAMICS_CONTROLLER_HOST_NAME}
+      APPDYNAMICS_CONTROLLER_PORT: ${APPDYNAMICS_CONTROLLER_PORT}
+      APPDYNAMICS_CONTROLLER_SSL_ENABLED: ${APPDYNAMICS_CONTROLLER_SSL_ENABLED}
+      APPDYNAMICS_AGENT_ACCOUNT_NAME: ${APPDYNAMICS_AGENT_ACCOUNT_NAME}
+      APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: ${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
+      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME: ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME}
+      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX:  ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX}
+      APPDYNAMICS_AGENT_APPLICATION_NAME: 'digibank'
+      APPDYNAMICS_AGENT_TIER_NAME: 'credit'
+      APPDYNAMICS_AGENT_NODE_NAME: 'credit-node'      
+
+    #APM - ADD AGENT VOLUME
+    volumes:
+      - agent-volume:/opt/appdynamics
+    restart: unless-stopped      
+
+# =====================================================================
+# Digital Bank Service Configuration
+# =====================================================================
+  bank:
+    image: leandrovo/digitalbank-new:1.0
+    container_name: bank
+    hostname: bank
+    environment:
+
+      # Debug Options
+      LOGGING_LEVEL_IO_DIGISIC_BANK: INFO
+      
+      # Digital Broker connection
+      SPRING_ARTEMIS_MODE: native
+      SPRING_ARTEMIS_HOST: broker
+      SPRING_ARTEMIS_PORT: 61616
+      SPRING_ARTEMIS_USER: admin
+      SPRING_ARTEMIS_PASSWORD: admin
+
+      # Digital Credit Connection
+      IO_DIGISIC_CREDIT_ENABLED: 'true'
+      IO_DIGISIC_CREDIT_PROTOCOL: http
+      IO_DIGISIC_CREDIT_HOST: credit
+      IO_DIGISIC_CREDIT_PORT: 8080
+      IO_DIGISIC_CREDIT_CONTEXT-PATH: /credit
+      IO_DIGISIC_CREDIT_USERNAME: admin@demo.io
+      IO_DIGISIC_CREDIT_PASSWORD: Demo123!
+
+      # Digital Credit Application Process JMS Queues
+      IO_DIGISIC_PARTNER_CREDIT_APP_REQUEST: CREDIT.APP.REQUEST
+      IO_DIGISIC_PARTNER_CREDIT_APP_RESPONSE: CREDIT.APP.RESPONSE
+
+      # ATM Location Service Connection 
+      IO_DIGISIC_BANK_ATM_PROTOCOL: http
+      IO_DIGISIC_BANK_ATM_HOST: atm-search
+      IO_DIGISIC_BANK_ATM_PORT: 8081
+
+      # VISA Direct Payment Service
+      IO_DIGISIC_BANK_VISA_PROTOCOL: http
+      IO_DIGISIC_BANK_VISA_HOST: visa
+      IO_DIGISIC_BANK_VISA_PORT: 8081
+      
+      # Open Banking API Service
+      IO_DIGISIC_BANK_OBP_ENABLED: 'true'
+      IO_DIGISIC_BANK_OBP_CONSUMER_KEY: vwfpvwfr1kngt0up2jelebzmvxrhst4vhxvw1jm3
+      IO_DIGISIC_BANK_OBP_VERSION: v4.0.0
+      IO_DIGISIC_BANK_OBP_PROTOCOL: https
+      IO_DIGISIC_BANK_OBP_HOST:
+      IO_DIGISIC_BANK_OBP_PORT:
+
+      #APM AGENT VARIABLES
+      JAVA_OPTS: '-javaagent:/opt/appdynamics/javaagent.jar'
+      APPDYNAMICS_CONTROLLER_HOST_NAME: ${APPDYNAMICS_CONTROLLER_HOST_NAME}
+      APPDYNAMICS_CONTROLLER_PORT: ${APPDYNAMICS_CONTROLLER_PORT}
+      APPDYNAMICS_CONTROLLER_SSL_ENABLED: ${APPDYNAMICS_CONTROLLER_SSL_ENABLED}
+      APPDYNAMICS_AGENT_ACCOUNT_NAME: ${APPDYNAMICS_AGENT_ACCOUNT_NAME}
+      APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: ${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
+      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME: ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME}
+      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX:  ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX} 
+      APPDYNAMICS_AGENT_APPLICATION_NAME: 'digibank'
+      APPDYNAMICS_AGENT_TIER_NAME: 'frontend'
+      APPDYNAMICS_AGENT_NODE_NAME: 'frontend-node'     
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      - broker
+      - credit
+
+    #APM - ADD AGENT VOLUME
+    volumes:
+      - agent-volume:/opt/appdynamics
+    restart: unless-stopped      
+
+###################################
+### DIGITAL BANKING APP - END
+###################################  
+
+###################################
+### DIGITAL BANKING BACKENDS - BEGIN
+###################################
+
+  atm-search:
+    image: leandrovo/digitalbank-backend-java:1.0
+    container_name: backends-atm-java
+    ports:
+      - "10081:8081"
+    environment:
+      # zipcode that causes slowdon
+      SLOW_ZIP: 14758
+
+      #APM AGENT VARIABLES
+      JAVA_TOOL_OPTIONS: '-javaagent:/opt/appdynamics/javaagent.jar'
+      APPDYNAMICS_CONTROLLER_HOST_NAME: ${APPDYNAMICS_CONTROLLER_HOST_NAME}
+      APPDYNAMICS_CONTROLLER_PORT: ${APPDYNAMICS_CONTROLLER_PORT}
+      APPDYNAMICS_CONTROLLER_SSL_ENABLED: ${APPDYNAMICS_CONTROLLER_SSL_ENABLED}
+      APPDYNAMICS_AGENT_ACCOUNT_NAME: ${APPDYNAMICS_AGENT_ACCOUNT_NAME}
+      APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: ${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
+      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME: ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME}
+      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX:  ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX} 
+      APPDYNAMICS_AGENT_APPLICATION_NAME: 'digibank'
+      APPDYNAMICS_AGENT_TIER_NAME: 'atm-search'
+      APPDYNAMICS_AGENT_NODE_NAME: 'atm-node'      
+
+    #APM - ADD AGENT VOLUME
+    volumes:
+      - agent-volume:/opt/appdynamics
+    restart: unless-stopped 
+
+  visa:
+    image: leandrovo/digitalbank-backend-java:1.0
+    container_name: backends-visa-java
+    ports:
+      - "10082:8081"
+    environment:
+      # zipcode that causes slowdon
+      SLOW_ZIP: 14758
+
+      #APM AGENT VARIABLES
+      JAVA_TOOL_OPTIONS: '-javaagent:/opt/appdynamics/javaagent.jar'
+      APPDYNAMICS_CONTROLLER_HOST_NAME: ${APPDYNAMICS_CONTROLLER_HOST_NAME}
+      APPDYNAMICS_CONTROLLER_PORT: ${APPDYNAMICS_CONTROLLER_PORT}
+      APPDYNAMICS_CONTROLLER_SSL_ENABLED: ${APPDYNAMICS_CONTROLLER_SSL_ENABLED}
+      APPDYNAMICS_AGENT_ACCOUNT_NAME: ${APPDYNAMICS_AGENT_ACCOUNT_NAME}
+      APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: ${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
+      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME: ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME}
+      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX:  ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX}
+      APPDYNAMICS_AGENT_APPLICATION_NAME: 'digibank'
+      APPDYNAMICS_AGENT_TIER_NAME: 'visa'
+      APPDYNAMICS_AGENT_NODE_NAME: 'visa-node'      
+
+    #APM - ADD AGENT VOLUME
+    volumes:
+      - agent-volume:/opt/appdynamics
+    restart: unless-stopped     
+
+
+#APM ADD AGENT VOLUME
+volumes:
+  agent-volume:

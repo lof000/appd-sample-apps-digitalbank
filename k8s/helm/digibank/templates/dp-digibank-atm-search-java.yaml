@@ -2,9 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: digital-bank-backends-atm-java-deployment
-  namespace: digibank
+  namespace: digibank-backends
   labels:
     app: digital-bank-backends-atm-java
+    tier: backend
+    tier-name: backend-atm
 spec:
   replicas: 1
   selector:
@@ -14,6 +16,8 @@ spec:
     metadata:
       labels:
         app: digital-bank-backends-atm-java
+        tier: backend
+        tier-name: backend-atm        
     spec:
       containers:
       - name: digital-bank-backends-atm-java
@@ -31,19 +35,13 @@ spec:
         env:
           - name: SLOW_ZIP
             value: "14758"
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: "http://otel-collector.otel.svc.cluster.local:4317"
+          - name: OTEL_RESOURCE_ATTRIBUTES
+            value: "service.name=digibank-java-atm-backend,service.namespace=digibank"            
+#          - name: OTEL_SERVICE_NAME
+#            value: "digibank-java-backend"             
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: digital-bank-backends-atm-java-svc
-  namespace: digibank
-spec:
-  selector:
-    app: digital-bank-backends-atm-java
-  ports:
-    - name: http-credit
-      port: 8081  
-      targetPort: atm-port
+
 
 
