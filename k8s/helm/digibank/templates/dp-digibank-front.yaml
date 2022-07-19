@@ -39,17 +39,16 @@ spec:
             secretKeyRef:
               name: sec-digibank-artemis
               key: SPRING_ARTEMIS_PASSWORD    
-#teste              
-        - name: APPDYNAMICS_OPENTELEMETRY
-          value: "true"
-        - name: APPDYNAMICS_AGENT_NODE_NAME
-          value: "reuse"            
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: "http://otel-collector.otel.svc.cluster.local:4317"
-        - name: OTEL_RESOURCE_ATTRIBUTES
-          value: "service.name=digibank-front,service.namespace=digibank"   
-#        - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
-#          value: "rG696B1cphkvcpYvwgR53DNxOkHa2WT5FAJG3SF6"           
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: sec-digibank-mysql
+              key: SPRING_DATASOURCE_USERNAME
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sec-digibank-mysql
+              key: SPRING_DATASOURCE_PASSWORD                 
         envFrom:
         - configMapRef:
             name: cm-digibank
@@ -59,18 +58,9 @@ spec:
             name: cm-digibank-visa
         - configMapRef:
             name: cm-digibank-opb
-#        - configMapRef:
-#            name: cm-digibank-db
-#        - name: SPRING_DATASOURCE_USERNAME
-#          valueFrom:
-#            secretKeyRef:
-#              name: sec-digibank-mysql
-#              key: SPRING_DATASOURCE_USERNAME
-#        - name: SPRING_DATASOURCE_PASSWORD
-#          valueFrom:
-#            secretKeyRef:
-#              name: sec-digibank-mysql
-#              key: SPRING_DATASOURCE_PASSWORD              
+        - configMapRef:
+            name: cm-digibank-db
+           
 
 
 ---

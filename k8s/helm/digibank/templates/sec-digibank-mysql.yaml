@@ -4,6 +4,6 @@ data:
   SPRING_DATASOURCE_USERNAME: {{ .Values.secret.mysql.SPRING_DATASOURCE_USERNAME }}
 kind: Secret
 metadata:
-  name: sc-digibank-mysql
+  name: sec-digibank-mysql
   namespace: digibank
 
