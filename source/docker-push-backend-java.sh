@@ -15,5 +15,5 @@ echo "-----------------------------------------"
 echo "Pushing.... ...." $1
 echo "-----------------------------------------"
 
-docker push leandrobroadcom/digitalbank-backend-java:$1
+docker push leandrovo/digitalbank-backend-java:$1
 

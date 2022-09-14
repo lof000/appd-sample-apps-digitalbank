@@ -22,6 +22,7 @@ spec:
       containers:
       - name: digital-bank-backends-visa-java
         image: "{{ .Values.image.visa }}"
+        imagePullPolicy: Always
         resources:
           requests:
             memory: "512M"
@@ -35,6 +36,8 @@ spec:
         env:
           - name: SLOW_ZIP
             value: "14758"
+          - name: AWS_API_URL
+            value: "{{ .Values.configMap.visa.AWS_API_URL }}"           
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: "http://otel-collector.otel.svc.cluster.local:4317"
           - name: OTEL_RESOURCE_ATTRIBUTES

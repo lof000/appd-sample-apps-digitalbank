@@ -38,7 +38,11 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: "http://otel-collector.otel.svc.cluster.local:4317"
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: "service.name=digibank-java-atm-backend,service.namespace=digibank"            
+            value: "service.name=digibank-java-atm-backend,service.namespace=digibank"     
+          - name: EXTERNAL_CALL
+            value: "{{ .Values.configMap.atm.EXTERNAL_CALL }}"  
+          - name: EXTERNAL_URL
+            value: "{{ .Values.configMap.atm.EXTERNAL_URL }}"                                 
 #          - name: OTEL_SERVICE_NAME
 #            value: "digibank-java-backend"             
 

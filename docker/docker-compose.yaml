@@ -194,8 +194,7 @@ services:
     ports:
       - "10082:8081"
     environment:
-      # zipcode that causes slowdon
-      SLOW_ZIP: 14758
+      AWS_API_URL: https://pp58dqva7a.execute-api.us-east-1.amazonaws.com/api/
 
       #APM AGENT VARIABLES
       JAVA_TOOL_OPTIONS: '-javaagent:/opt/appdynamics/javaagent.jar'

@@ -447,7 +447,7 @@ vars.put(&quot;BASE_GATEWAY_PORT&quot;, System.getenv(&quot;BASE_GATEWAY_PORT&qu
                 <elementProp name="extAmount" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">extAmount</stringProp>
-                  <stringProp name="Argument.value">5</stringProp>
+                  <stringProp name="Argument.value">100</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -499,7 +499,7 @@ vars.put(&quot;BASE_GATEWAY_PORT&quot;, System.getenv(&quot;BASE_GATEWAY_PORT&qu
                 <elementProp name="extAmount" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">extAmount</stringProp>
-                  <stringProp name="Argument.value">5</stringProp>
+                  <stringProp name="Argument.value">30</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -551,7 +551,7 @@ vars.put(&quot;BASE_GATEWAY_PORT&quot;, System.getenv(&quot;BASE_GATEWAY_PORT&qu
                 <elementProp name="extAmount" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">extAmount</stringProp>
-                  <stringProp name="Argument.value">5</stringProp>
+                  <stringProp name="Argument.value">88</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
@@ -559,6 +559,58 @@ vars.put(&quot;BASE_GATEWAY_PORT&quot;, System.getenv(&quot;BASE_GATEWAY_PORT&qu
                   <boolProp name="HTTPArgument.always_encode">true</boolProp>
                   <stringProp name="Argument.name">extAccount</stringProp>
                   <stringProp name="Argument.value">BSB</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
+            <stringProp name="HTTPSampler.port">${HTTP_PORT}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">bank/external/xfer-visa-process</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="Origin" elementType="Header">
+                  <stringProp name="Header.name">Origin</stringProp>
+                  <stringProp name="Header.value">http://34.105.96.111:8082</stringProp>
+                </elementProp>
+                <elementProp name="Content-Type" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+              <stringProp name="ConstantTimer.delay">9319</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/bank/external/xfer-visa-process" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="extAmount" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                  <stringProp name="Argument.name">extAmount</stringProp>
+                  <stringProp name="Argument.value">5757</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                </elementProp>
+                <elementProp name="extAccount" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                  <stringProp name="Argument.name">extAccount</stringProp>
+                  <stringProp name="Argument.value">aws</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>

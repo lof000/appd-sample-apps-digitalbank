@@ -14,5 +14,5 @@ echo "-----------------------------------------"
 echo "Building ...." $1
 echo "-----------------------------------------"
 
-docker build -f Dockerfile-Backends-java -t leandrobroadcom/digitalbank-backend-java:$1 .
+docker build -f Dockerfile-Backends-java -t leandrovo/digitalbank-backend-java:$1 .
 

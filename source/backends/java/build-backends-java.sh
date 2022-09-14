@@ -1,3 +1,4 @@
+#!/bin/bash
 echo "oi"
 if [ $# -eq 0 ]
   then
@@ -20,8 +21,4 @@ mvn clean package -DskipTests=true -DbuildNumber=$1
 cd ..
 cp Digital-java-Backends/target/digisicapis-0.0.1-SNAPSHOT.jar .
 
-docker build . -t leandrovo/digitalbank-backends:1.0
-
-
-
-
+docker build -f Dockerfile-Backends-java -t leandrovo/digitalbank-backend-java:$1 .

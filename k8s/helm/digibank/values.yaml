@@ -37,10 +37,13 @@ configMap:
     IO_DIGISIC_BANK_VISA_PROTOCOL: "http"
     IO_DIGISIC_BANK_VISA_HOST: "digital-bank-backends-visa-svc.digibank-backends.svc.cluster.local"
     IO_DIGISIC_BANK_VISA_PORT: "8081"
+    AWS_API_URL: "https://zglg25rq8a.execute-api.us-east-1.amazonaws.com/api/"
   atm:
     IO_DIGISIC_BANK_ATM_PROTOCOL: "http"
     IO_DIGISIC_BANK_ATM_HOST: "digital-bank-backends-atm-svc.digibank-backends.svc.cluster.local"
     IO_DIGISIC_BANK_ATM_PORT: "8081"
+    EXTERNAL_CALL: "y"
+    EXTERNAL_URL: "http://atm-nginx:80"
   mysql:
     SPRING_DATASOURCE_PLATFORM: "mysql"
     SPRING_DATASOURCE_URL: "jdbc:mysql://digital-bank-mysql-svc:3306/digitalbank?useSSL=false&allowPublicKeyRetrieval=true"
