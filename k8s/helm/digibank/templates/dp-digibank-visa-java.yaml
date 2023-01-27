@@ -34,8 +34,10 @@ spec:
           - name: visa-port
             containerPort: 8081
         env:
-          - name: SLOW_ZIP
-            value: "14758"
+          - name: SLOW_REGION
+            value: "{{ .Values.configMap.visa.SLOW_REGION }}"  
+          - name: SLOW_TIME
+            value: "{{ .Values.configMap.visa.SLOW_TIME }}"             
           - name: AWS_API_URL
             value: "{{ .Values.configMap.visa.AWS_API_URL }}"           
           - name: OTEL_EXPORTER_OTLP_ENDPOINT

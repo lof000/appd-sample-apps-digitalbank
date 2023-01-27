@@ -18,6 +18,12 @@ public class DemoVISAController {
     @Value("${AWS_API_URL:NONE}")
     private String awsLambdaUrl;
 
+    @Value("${SLOW_REGION:NONE}")
+    private String slowRegion;
+
+    @Value("${SLOW_TIME:NONE}")
+    private String slowTime;
+
     //http://httpvisadirect10418-8080-default.mock.blazemeter.com/visadirect/fundstransfer/v1/pullfundstransactions?idcode=ABCD1234ABCD123&amount=5
 
     @RequestMapping(value = "/fundstransfer/v1/pullfundstransactions", method = RequestMethod.GET)
@@ -36,6 +42,20 @@ public class DemoVISAController {
                 System.out.println("NO Url");
             }
 
+        }
+
+        if (!slowRegion.equals("NONE")){
+            if (idcode.equalsIgnoreCase(slowRegion)){
+                if (slowTime.equals("NONE")){
+                    slowTime="3000";
+                }
+                try {
+                    System.out.println("hanging for "+slowTime+" ms");
+                    Thread.sleep(Long.parseLong(slowTime));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
 

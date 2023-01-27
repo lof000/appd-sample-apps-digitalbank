@@ -8,13 +8,15 @@ data:
       listen                  80;
       server_name             _;
       root                    /usr/share/nginx/html;
+      underscores_in_headers on;
       location / {
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
         proxy_pass http://digital-bank-svc.digibank.svc.cluster.local:8080;  
         proxy_pass_request_headers      on; 
+        add_header Access-Control-Allow-Origin "https://cdn.appdynamics.com";
+        proxy_set_header Cookie "allow_bt_cookie=true; ${http_cookie}";
          
         sub_filter      <head>
             '<head><script>window["adrum-app-key"]="AD-AAB-ABJ-JCW";window["adrum-start-time"]=new Date().getTime();</script><script type="text/javascript" src="//cdn.appdynamics.com/adrum/adrum-latest.js"></script>';

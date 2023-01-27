@@ -30,3 +30,4 @@ k8s/helm/digibank/values.yamlORIG
 k8s/appdynamics/values.yaml
 k8s/otel/otel-config.yaml
 k8s/appdynamics/dashs.txt
+k8s/appdynamics/values.yamlSEMINFRA
