@@ -1,0 +1,25 @@
+#ENV
+ID=ledeoliv
+
+#ENV VARIABLES FOR OTEL
+#export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://bancogalicia.observe.appdynamics.com/data
+export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://bancogalicia.observe.appdynamics.com/data/v1/trace
+export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer eyJhbGciOiJFUzI1NiIsImtpZCI6IjExMTgwNTUyMzA5MTU1NTk5Mjk3MjMzODAzODAzMDEzMDcwODQ4NiIsInR5cCI6IkpXVCJ9.eyJhaWQiOiJkZWZhdWx0IiwiYW1yIjpbXSwiYXVkIjpbImFndF83T1BXUUtia0k2SU5zS0tjUmsxMk9EIiwic3BpZmZlOi8vYmFuY29nYWxpY2lhLm9ic2VydmUuYXBwZHluYW1pY3MuY29tL2F1dGgvYTBhMjgzN2YtYzUxZC00ZDBlLTg1ZTYtOWM2NjVhNzc3OWYxL2RlZmF1bHQvYzM1OWVlYmo4ZzI2dDB1cm04b2ciXSwiZXhwIjoxNzE0MDA0NzQ0LCJpYXQiOjE3MTQwMDExNDQsImlkcCI6IiIsImlzcyI6Imh0dHBzOi8vYmFuY29nYWxpY2lhLm9ic2VydmUuYXBwZHluYW1pY3MuY29tL2F1dGgvYTBhMjgzN2YtYzUxZC00ZDBlLTg1ZTYtOWM2NjVhNzc3OWYxL2RlZmF1bHQiLCJqdGkiOiIwNzFmZDdjNi0wMWI4LTQ5ZmQtYTIzZC02ZDg2MGFiZWQ4YTkiLCJuYmYiOjE3MTQwMDExNDQsInB0eSI6IkFHRU5UIiwic2NwIjpbImludHJvc3BlY3RfdG9rZW5zIiwicmV2b2tlX3Rva2VucyJdLCJzdCI6InB1YmxpYyIsInN1YiI6ImFndF83T1BXUUtia0k2SU5zS0tjUmsxMk9EIiwidGlkIjoiYTBhMjgzN2YtYzUxZC00ZDBlLTg1ZTYtOWM2NjVhNzc3OWYxIn0.D3RAHSdD_iNVZwmUE3Laem8zFaX_65Vn1zQN49DXAaOi0jidMo-oBrcilPb7KhjsgV-2tB7HPZFytuKIovg8WA"
+
+
+export OTEL_RESOURCE_ATTRIBUTES="service.name=app33,service.namespace=hib3$ID"
+export OTEL_PROPAGATORS=tracecontext,baggage
+
+#APM AGENT VARIABLES
+#export JAVA_TOOL_OPTIONS="-javaagent:../opentelemetry-javaagent.jar"
+#export JAVA_TOOL_OPTIONS="-Dappdynamics.opentelemetry.enabled=true -javaagent:../appd_agent/javaagent.jar"
+
+java -Dserver.port=8084 -jar target/digisicapis-2.1.0.null.jar
+
+
+#    traces_endpoint: https://bancogalicia.observe.appdynamics.com/data/v1/trace 
+#    logs_endpoint: https://bancogalicia.observe.appdynamics.com/data/v1/logs 
+#    metrics_endpoint: https://bancogalicia.observe.appdynamics.com/data/v1/metrics 
