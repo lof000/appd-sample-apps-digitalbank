@@ -1,12 +1,7 @@
 package io.demo.apis.digisicapis;
 
 
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.context.Scope;
 import java.util.Random;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,70 +27,42 @@ public class DemoVISAController {
   @Value("${ERROR_REGION:NONE}")
   private String errorRegion;
   
-  private final Tracer tracer;
-  
   private static String[] ids = new String[] { "jsmith@demo.io", "ledeoliv@cisco.com", "mkuglerr@cisco.com", "vader@deathstar.com", "luke@xwingacademhy.com", "lcroft@croftcorp.com", "jin.kazama@gcorp.com", "heihachi.mishima@gcorp.com", "kazuya.mishima@gcorp.com" };
-  
-  @Autowired
-  DemoVISAController(OpenTelemetry openTelemetry) {
-    this.tracer = openTelemetry.getTracer(io.demo.apis.digisicapis.DemoVISAController.class.getName(), "0.1.0");
-  }
-  
+    
   @RequestMapping(value = {"/fundstransfer/v1/pullfundstransactions"}, method = {RequestMethod.GET})
   @ResponseBody
   public String atmSearch(@RequestParam(name = "idcode", required = false) String idcode, @RequestParam(name = "amount", required = false) String amount) throws Exception {
     System.out.println(idcode);
     System.out.println(amount);
-    Span span = this.tracer.spanBuilder("transferFunds").startSpan();
-    try {
-      Scope scope = span.makeCurrent();
-      try {
-        Random random = new Random();
-        int randomNumber = random.nextInt(8);
-        span.setAttribute("amountxfer", Long.parseLong(amount));
-        span.setAttribute("location", "idcode");
-        span.setAttribute("userId", ids[randomNumber]);
-        if (idcode.equals("aws")) {
-          System.out.println("Calling AWS");
-          if (!this.awsLambdaUrl.equals("NONE")) {
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.getForEntity(this.awsLambdaUrl, String.class, new Object[0]);
-            System.out.println((String)response.getBody());
-          } else {
-            System.out.println("NO Url");
-          } 
-        } 
-        if (!this.slowRegion.equals("NONE") && 
-          idcode.equalsIgnoreCase(this.slowRegion)) {
-          if (this.slowTime.equals("NONE"))
-            this.slowTime = "3000"; 
-          try {
-            System.out.println("hanging for " + this.slowTime + " ms");
-            Thread.sleep(Long.parseLong(this.slowTime));
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          } 
-        } 
-        if (idcode.equalsIgnoreCase(this.errorRegion)) {
-          System.out.println("ERROR: Transaction not completed! Missim field <account number>!!!");
-          throw new Exception("Transaction not completed! Missim field <account number>!!!");
-        } 
-        if (scope != null)
-          scope.close(); 
-      } catch (Throwable throwable) {
-        if (scope != null)
-          try {
-            scope.close();
-          } catch (Throwable throwable1) {
-            throwable.addSuppressed(throwable1);
-          }  
-        throw throwable;
+
+    Random random = new Random();
+    int randomNumber = random.nextInt(8);
+    if (idcode.equals("aws")) {
+      System.out.println("Calling AWS");
+      if (!this.awsLambdaUrl.equals("NONE")) {
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.getForEntity(this.awsLambdaUrl, String.class, new Object[0]);
+        System.out.println((String)response.getBody());
+      } else {
+        System.out.println("NO Url");
       } 
-    } catch (Exception e) {
-      span.recordException(e);
-    } finally {
-      span.end();
     } 
+    if (!this.slowRegion.equals("NONE") && 
+      idcode.equalsIgnoreCase(this.slowRegion)) {
+      if (this.slowTime.equals("NONE"))
+        this.slowTime = "3000"; 
+      try {
+        System.out.println("hanging for " + this.slowTime + " ms");
+        Thread.sleep(Long.parseLong(this.slowTime));
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      } 
+    } 
+    if (idcode.equalsIgnoreCase(this.errorRegion)) {
+      System.out.println("ERROR: Transaction not completed! Missim field <account number>!!!");
+      throw new Exception("Transaction not completed! Missim field <account number>!!!");
+    } 
+
     return "{\"transactionIdentifier\": 875806056061895, \"actionCode\": \"00\", \"approvalCode\": \"98765X\", \"responseCode\": \"5\", \"transmissionDateTime\": \"2020-08-28T11:52:08Z\", \"cavvResultCode\": \"8\", \"cpsAuthorizationCharacteristicsIndicator\": \"3333\"}";
   }
   
