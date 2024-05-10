@@ -1,31 +1,18 @@
 ###################################
 ### DIGITAL BANKING 
 # app
-# no backends
-# app agents
 #
-# Please configure APM related info in .env file
+# Please configure image names in .env file
 ###################################
 
 version: "3.5"
 services:
 
-# APM - AGENT VOLUME (SIDECAR)
-  appd-agent-saas:
-    image: docker.io/appdynamics/java-agent:latest
-    container_name: appd-agent
-    volumes:
-      - agent-volume:/opt/appdynamics
-
-###################################
-### DIGITAL BANKING APP - BEGIN
-###################################
-
 # =====================================================================
 # Digital Broker Service Configuration
 # =====================================================================
   broker:
-    image: leandrovo/digitalbroker-new:1.0
+    image: ${BROKER_IMAGE}
     container_name: broker
     hostname: broker
     ports:
@@ -37,7 +24,7 @@ services:
 # Digital Credit Service Configuration
 # =====================================================================    
   credit:
-    image: leandrovo/digitalcredit-new:1.0
+    image: ${CREDIT_IMAGE}
     container_name: credit
     hostname: credit
     environment:
@@ -59,33 +46,11 @@ services:
       # Digital Credit Application Process JMS Queues
       IO_DIGISIC_PARTNER_CREDIT_APP_REQUEST: CREDIT.APP.REQUEST
       IO_DIGISIC_PARTNER_CREDIT_APP_RESPONSE: CREDIT.APP.RESPONSE
-
-      #APM AGENT VARIABLES
-      JAVA_OPTS: '-javaagent:/opt/appdynamics/javaagent.jar'
-      APPDYNAMICS_CONTROLLER_HOST_NAME: ${APPDYNAMICS_CONTROLLER_HOST_NAME}
-      APPDYNAMICS_CONTROLLER_PORT: ${APPDYNAMICS_CONTROLLER_PORT}
-      APPDYNAMICS_CONTROLLER_SSL_ENABLED: ${APPDYNAMICS_CONTROLLER_SSL_ENABLED}
-      APPDYNAMICS_AGENT_ACCOUNT_NAME: ${APPDYNAMICS_AGENT_ACCOUNT_NAME}
-      APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: ${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
-      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME: ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME}
-      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX:  ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX}
-      APPDYNAMICS_AGENT_APPLICATION_NAME:  ${APPDYNAMICS_AGENT_APPLICATION_NAME}
-      APPDYNAMICS_AGENT_TIER_NAME: 'credit'
-      APPDYNAMICS_AGENT_NODE_NAME: 'credit-node'      
-
     depends_on:
       - broker
 
-    #APM - ADD AGENT VOLUME
-    volumes:
-      - agent-volume:/opt/appdynamics
-    restart: unless-stopped      
-
-# =====================================================================
-# Digital Bank Service Configuration
-# =====================================================================
   bank:
-    image: leandrovo/digitalbank-new:1.0
+    image: ${BANK_IMAGE}
     container_name: bank
     hostname: bank
     environment:
@@ -131,93 +96,36 @@ services:
       IO_DIGISIC_BANK_OBP_HOST:
       IO_DIGISIC_BANK_OBP_PORT:
 
-      #APM AGENT VARIABLES
-      JAVA_OPTS: '-javaagent:/opt/appdynamics/javaagent.jar'
-      APPDYNAMICS_CONTROLLER_HOST_NAME: ${APPDYNAMICS_CONTROLLER_HOST_NAME}
-      APPDYNAMICS_CONTROLLER_PORT: ${APPDYNAMICS_CONTROLLER_PORT}
-      APPDYNAMICS_CONTROLLER_SSL_ENABLED: ${APPDYNAMICS_CONTROLLER_SSL_ENABLED}
-      APPDYNAMICS_AGENT_ACCOUNT_NAME: ${APPDYNAMICS_AGENT_ACCOUNT_NAME}
-      APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: ${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
-      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME: ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME}
-      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX:  ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX} 
-      APPDYNAMICS_AGENT_APPLICATION_NAME:  ${APPDYNAMICS_AGENT_APPLICATION_NAME}
-      APPDYNAMICS_AGENT_TIER_NAME: 'frontend'
-      APPDYNAMICS_AGENT_NODE_NAME: 'frontend-node'     
-
     ports:
       - "8080:8080"
 
     depends_on:
       - broker
       - credit
-
-    #APM - ADD AGENT VOLUME
-    volumes:
-      - agent-volume:/opt/appdynamics
     restart: unless-stopped      
 
-###################################
-### DIGITAL BANKING APP - END
-###################################  
-
-###################################
-### DIGITAL BANKING BACKENDS - BEGIN
-###################################
-
   atm-search:
-    image: leandrovo/digitalbank-backend-java:1.0
+    image: ${ATM_JAVA_IMAGE}
     container_name: backends-atm-java
     ports:
       - "10081:8081"
     environment:
       # zipcode that causes slowdon
       SLOW_ZIP: 14758
+      EXTERNAL_CALL: N
+      EXTERNAL_URL: "http://atm-nginx:80"      
 
-      #APM AGENT VARIABLES
-      JAVA_TOOL_OPTIONS: '-javaagent:/opt/appdynamics/javaagent.jar'
-      APPDYNAMICS_CONTROLLER_HOST_NAME: ${APPDYNAMICS_CONTROLLER_HOST_NAME}
-      APPDYNAMICS_CONTROLLER_PORT: ${APPDYNAMICS_CONTROLLER_PORT}
-      APPDYNAMICS_CONTROLLER_SSL_ENABLED: ${APPDYNAMICS_CONTROLLER_SSL_ENABLED}
-      APPDYNAMICS_AGENT_ACCOUNT_NAME: ${APPDYNAMICS_AGENT_ACCOUNT_NAME}
-      APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: ${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
-      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME: ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME}
-      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX:  ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX} 
-      APPDYNAMICS_AGENT_APPLICATION_NAME:  ${APPDYNAMICS_AGENT_APPLICATION_NAME}
-      APPDYNAMICS_AGENT_TIER_NAME: 'atm-search'
-      APPDYNAMICS_AGENT_NODE_NAME: 'atm-node'      
-
-    #APM - ADD AGENT VOLUME
-    volumes:
-      - agent-volume:/opt/appdynamics
     restart: unless-stopped 
 
   visa:
-    image: leandrovo/digitalbank-backend-java:1.0
+    image: ${VISA_JAVA_IMAGE}    
     container_name: backends-visa-java
     ports:
       - "10082:8081"
     environment:
       AWS_API_URL: https://pp58dqva7a.execute-api.us-east-1.amazonaws.com/api/
+      SLOW_REGION: ABCD1234ABCD123
+      SLOW_TIME: 6000
 
-      #APM AGENT VARIABLES
-      JAVA_TOOL_OPTIONS: '-javaagent:/opt/appdynamics/javaagent.jar'
-      APPDYNAMICS_CONTROLLER_HOST_NAME: ${APPDYNAMICS_CONTROLLER_HOST_NAME}
-      APPDYNAMICS_CONTROLLER_PORT: ${APPDYNAMICS_CONTROLLER_PORT}
-      APPDYNAMICS_CONTROLLER_SSL_ENABLED: ${APPDYNAMICS_CONTROLLER_SSL_ENABLED}
-      APPDYNAMICS_AGENT_ACCOUNT_NAME: ${APPDYNAMICS_AGENT_ACCOUNT_NAME}
-      APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: ${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
-      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME: ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME}
-      APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX:  ${APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX}
-      APPDYNAMICS_AGENT_APPLICATION_NAME:  ${APPDYNAMICS_AGENT_APPLICATION_NAME}
-      APPDYNAMICS_AGENT_TIER_NAME: 'visa'
-      APPDYNAMICS_AGENT_NODE_NAME: 'visa-node'      
-
-    #APM - ADD AGENT VOLUME
-    volumes:
-      - agent-volume:/opt/appdynamics
     restart: unless-stopped     
 
-
-#APM ADD AGENT VOLUME
-volumes:
-  agent-volume:
