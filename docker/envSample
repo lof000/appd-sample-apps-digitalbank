@@ -6,3 +6,5 @@ VISA_JAVA_IMAGE=leandrovo/digitalbank-backend-java:3.0
 
  
   
+SPLUNK_ACCESS_TOKEN=
+SPLUNK_REALM=

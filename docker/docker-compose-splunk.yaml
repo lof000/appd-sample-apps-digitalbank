@@ -8,6 +8,13 @@
 version: "3.5"
 services:
 
+# APM - AGENT VOLUME (SIDECAR)
+  splunk-java-agent:
+    image: leandrovo/splunk-javaagent:latest
+    container_name: splunk-agent
+    volumes:
+      - agent-volume:/opt/splunk/
+
 # =====================================================================
 # Digital Broker Service Configuration
 # =====================================================================
@@ -46,8 +53,19 @@ services:
       # Digital Credit Application Process JMS Queues
       IO_DIGISIC_PARTNER_CREDIT_APP_REQUEST: CREDIT.APP.REQUEST
       IO_DIGISIC_PARTNER_CREDIT_APP_RESPONSE: CREDIT.APP.RESPONSE
+
+      OTEL_SERVICE_NAMESPACE: digibank
+      OTEL_SERVICE_NAME: bank-credit
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=dev,service.version=3.0  
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otelcol:4317
+      JAVA_TOOL_OPTIONS: '-javaagent:/opt/splunk/splunk-otel-javaagent.jar -Dsplunk.profiler.enabled=true -Dsplunk.profiler.memory.enabled=true -Dsplunk.metrics.enabled=true'
+    volumes:
+      - agent-volume:/opt/splunk
+
     depends_on:
       - broker
+    restart: unless-stopped
+
 
   bank:
     image: ${BANK_IMAGE}
@@ -95,6 +113,13 @@ services:
       IO_DIGISIC_BANK_OBP_PROTOCOL: https
       IO_DIGISIC_BANK_OBP_HOST:
       IO_DIGISIC_BANK_OBP_PORT:
+      OTEL_SERVICE_NAMESPACE: digibank
+      OTEL_SERVICE_NAME: bank-front
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=dev,service.version=3.0  
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otelcol:4317
+      JAVA_TOOL_OPTIONS: '-javaagent:/opt/splunk/splunk-otel-javaagent.jar -Dsplunk.profiler.enabled=true -Dsplunk.profiler.memory.enabled=true -Dsplunk.metrics.enabled=true'
+    volumes:
+      - agent-volume:/opt/splunk
 
     ports:
       - "8080:8080"
@@ -102,6 +127,7 @@ services:
     depends_on:
       - broker
       - credit
+      
     restart: unless-stopped      
 
   atm-search:
@@ -113,9 +139,16 @@ services:
       # zipcode that causes slowdon
       SLOW_ZIP: 14758
       EXTERNAL_CALL: N
-      EXTERNAL_URL: "http://atm-nginx:80"      
-
+      EXTERNAL_URL: "http://atm-nginx:80"   
+      OTEL_SERVICE_NAMESPACE: digibank
+      OTEL_SERVICE_NAME: bank-atm
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=dev,service.version=3.0  
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otelcol:4317
+      JAVA_TOOL_OPTIONS: '-javaagent:/opt/splunk/splunk-otel-javaagent.jar -Dsplunk.profiler.enabled=true -Dsplunk.profiler.memory.enabled=true -Dsplunk.metrics.enabled=true'
+    volumes:
+      - agent-volume:/opt/splunk       
     restart: unless-stopped 
+
 
   visa:
     image: ${VISA_JAVA_IMAGE}    
@@ -126,6 +159,70 @@ services:
       AWS_API_URL: https://pp58dqva7a.execute-api.us-east-1.amazonaws.com/api/
       SLOW_REGION: ABCD1234ABCD123
       SLOW_TIME: 6000
+      OTEL_SERVICE_NAMESPACE: digibank
+      OTEL_SERVICE_NAME: bank-visa
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=dev,service.version=3.0  
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otelcol:4317
+      JAVA_TOOL_OPTIONS: '-javaagent:/opt/splunk/splunk-otel-javaagent.jar -Dsplunk.profiler.enabled=true -Dsplunk.profiler.memory.enabled=true -Dsplunk.metrics.enabled=true'
+    volumes:
+      - agent-volume:/opt/splunk      
 
     restart: unless-stopped     
 
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - type: bind
+        source: ./default-front.conf
+        target: /etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - bank  
+
+
+###################################
+### SPLUNK OTEL COLLECTOR
+###################################
+
+  otelcol:
+    image: quay.io/signalfx/splunk-otel-collector:latest
+    container_name: otel-col
+    deploy:
+      resources:
+        limits:
+          memory: 125M
+    restart: unless-stopped
+    command: ["--config=/etc/otelcol-config.yml"]
+    volumes:
+      - ./otelcol-config.yml:/etc/otelcol-config.yml
+      - ./logs:/logs
+      - ./checkpoint:/checkpoint
+    ports:
+      - "4317" # OTLP over gRPC receiver
+      - "4318" # OTLP over HTTP receiver
+      - "9464"
+      - "8888"
+      - "13133"
+      - "14250"
+      - "14268"
+      - "6060"
+      - "9080"
+      - "9411"
+      - "9943"
+      - "7276"
+    environment:
+      SPLUNK_ACCESS_TOKEN: ${SPLUNK_ACCESS_TOKEN}
+      SPLUNK_REALM: ${SPLUNK_REALM}
+
+## LOAG GEN - browser
+  playright:
+    image: leandrovo/digibank-synth:latest
+    container_name: play
+    depends_on:
+      - nginx  
+
+#APM ADD AGENT VOLUME
+volumes:
+  agent-volume:
