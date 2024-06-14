@@ -25,6 +25,13 @@ spec:
         name: digital-bank-backends-atm-node
         ports:
           - name: atm-port
-            containerPort: 3000        
+            containerPort: 3000    
+        env:
+#          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+#            value: "{{ .Values.otelexporter }}"  
+          - name: OTEL_RESOURCE_ATTRIBUTES
+            value: "{{ .Values.otelresource }}"   
+          - name: OTEL_SERVICE_NAME
+            value: "atm-node"                   
         resources: {}
 status: {}

@@ -34,18 +34,21 @@ spec:
           - name: visa-port
             containerPort: 8081
         env:
+#          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+#            value: "{{ .Values.otelexporter }}"  
+          - name: OTEL_RESOURCE_ATTRIBUTES
+            value: "{{ .Values.otelresource }}"   
+          - name: OTEL_SERVICE_NAME
+            value: "visapay-java"                                  
           - name: SLOW_REGION
             value: "{{ .Values.configMap.visa.SLOW_REGION }}"  
           - name: SLOW_TIME
             value: "{{ .Values.configMap.visa.SLOW_TIME }}"             
           - name: AWS_API_URL
             value: "{{ .Values.configMap.visa.AWS_API_URL }}"           
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: "http://otel-collector.otel.svc.cluster.local:4317"
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: "service.name=digibank-java-atm-backend,service.namespace=digibank"             
-#          - name: OTEL_SERVICE_NAME
-#            value: "digibank"   
+          - name: ERROR_REGION
+            value: "{{ .Values.configMap.visa.ERROR_REGION }}"
+
 
 
 

@@ -33,19 +33,23 @@ spec:
           - name: atm-port
             containerPort: 8081
         env:
-          - name: SLOW_ZIP
-            value: "14758"
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: "http://otel-collector.otel.svc.cluster.local:4317"
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: "service.name=digibank-java-atm-backend,service.namespace=digibank"     
+            value: "{{ .Values.otelresource }}"        
+          - name: SLOW_ZIP
+            value: "{{ .Values.configMap.atm.SLOW_ZIP }}"
+          - name: ERROR_ZIP
+            value: "{{ .Values.configMap.atm.ERROR_ZIP }}"
+
+#          - name: OTEL_RESOURCE_ATTRIBUTES
+#            value: "service.name=digibank-java-atm-backend,service.namespace=digibank"     
           - name: EXTERNAL_CALL
             value: "{{ .Values.configMap.atm.EXTERNAL_CALL }}"  
           - name: EXTERNAL_URL
             value: "{{ .Values.configMap.atm.EXTERNAL_URL }}"                                 
 #          - name: OTEL_SERVICE_NAME
 #            value: "digibank-java-backend"             
-
+          - name: OTEL_SERVICE_NAME
+            value: "atm-java"  
 
 
 

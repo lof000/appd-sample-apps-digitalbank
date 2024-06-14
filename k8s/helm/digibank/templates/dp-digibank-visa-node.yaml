@@ -26,7 +26,14 @@ spec:
         name: digital-bank-backends-visa-node
         ports:
           - name: visa-port
-            containerPort: 3000        
+            containerPort: 3000   
+        env:
+#          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+#            value: "{{ .Values.otelexporter }}"  
+          - name: OTEL_RESOURCE_ATTRIBUTES
+            value: "{{ .Values.otelresource }}"   
+          - name: OTEL_SERVICE_NAME
+            value: "visapay-node"                                  
         resources: {}
 status: {}
 
